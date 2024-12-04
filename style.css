@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
 body {
@@ -20,13 +21,13 @@ header {
 }
 
 .turntable {
-    width: 220px;
-    height: 220px;
+    width: 310px;
+    height: 310px;
     background: radial-gradient(circle, #121212 60%, purple 95%);
     border-radius: 50%;
     position: absolute;
-    top: 20px;
-    left: 20px;
+    top: 30px;
+    left: 40px;
     box-shadow: 0 0 15px purple;
     display: flex;
     align-items: center;
@@ -37,7 +38,7 @@ header {
     content: '';
     width: 80px; /* Size of the second inner circle */
     height: 80px;
-    background: rgba(213, 21, 320, 0.15); /* Slightly darker for contrast */
+    background: rgba(213, 21, 320, 0.13); /* Slightly darker for contrast */
     border-radius: 50%;
     position: absolute;
     z-index: 1; /* Ensures it stays above the vinyl */
@@ -64,7 +65,7 @@ h1 { /*Seekify*/
     text-align: right; /* Aligns text to the left */
     position: absolute; /* Allows custom placement */
     top: 50px; /* Adjust vertical position */
-    left: 310px; /* Moves it to the right */
+    left: 38%; /* Moves it to the right */
 }
 
 p { /* Your Music Recommendations */
@@ -73,7 +74,7 @@ p { /* Your Music Recommendations */
     text-align: right; /* Aligns text to the right */
     position: absolute; /* Allows custom placement */
     top: 160px; /* Adjust vertical position */
-    left: 290px; /* Moves it to the right */
+    left: 37%; /* Moves it to the right */
     letter-spacing: 2px; /* Adds spacing between letters */
     line-height: 1.5; /* Increases spacing between lines */
 }
@@ -83,8 +84,8 @@ p { /* Your Music Recommendations */
     justify-content: center; /* Center buttons on the page */
     gap: 15px; /* Add space between buttons */
     position: absolute;
-    top: 220px; /* Adjust position on the page */
-    left: 65%; /* Center horizontally */
+    top: 230px; /* Adjust position on the page */
+    left: 51%; /* Center horizontally */
     transform: translateX(-50%);
 }
 
@@ -93,7 +94,7 @@ button {
     margin: 5px;
     border: none;
     border-radius: 25px;
-    font-size: 16px;
+    font-size: 20px;
     cursor: pointer;
 }
 
@@ -103,7 +104,7 @@ button {
     color: white; /* Text color */
     padding: 10px 20px; /* Padding for size */
     border-radius: 25px; /* Rounded edges */
-    font-size: 16px; /* Text size */
+    font-size: 20px; /* Text size */
     cursor: pointer; /* Pointer cursor on hover */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Adds a shadow */
     transition: all 0.3s ease; /* Smooth hover effect */
@@ -118,7 +119,7 @@ button {
 nav { /* this is 'song artist and genre */
     position: absolute; /* Allows custom placement */
     top: 330px; /* Moves it further down */
-    left: -8%; /* Aligns it with the center of the screen */
+    left: -9%; /* Aligns it with the center of the screen */
     width: 120%; /* Ensures it spans the full width of the container */
     margin: 0 auto;
     display: flex;
@@ -206,13 +207,13 @@ nav a:hover {
     color: white; /* Text color */
     padding: 10px 30px; /* Padding for size */
     border-radius: 25px; /* Rounded edges */
-    font-size: 18px; /* Text size */
+    font-size: 20px; /* Text size */
     cursor: pointer; /* Pointer cursor on hover */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Adds a shadow */
     transition: all 0.3s ease; /* Smooth hover effect */
     position: absolute; /* Keeps it positioned precisely */
     top: 630px; /* Moves it further down */
-    left: 50%; /* Centers it horizontally */
+    left: 51%; /* Centers it horizontally */
     transform: translateX(-50%); /* Ensures centering */
 }
 
@@ -236,3 +237,39 @@ nav a:hover {
     height: 100%;
 }
 
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.8); /* Black background with opacity */
+}
+
+.modal-content {
+    background-color: #121212;
+    margin: 15% auto; /* Center the modal */
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%; /* Relative width */
+    color: white;
+    text-align: left;
+}
+
+.close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover, .close:focus {
+    color: #f44336;
+    text-decoration: none;
+    cursor: pointer;
+}
