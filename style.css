@@ -252,13 +252,34 @@ nav a:hover {
 
 .modal-content {
     background-color: #121212;
-    margin: 15% auto; /* Center the modal */
+    margin: 0 auto; /* Center horizontally */
     padding: 20px;
     border-radius: 10px;
     width: 80%; /* Relative width */
     color: white;
     text-align: left;
+    display: flex; /* Flexbox for vertical stacking */
+    flex-direction: column;
+    gap: 20px; /* Consistent spacing between elements */
+    position: relative; /* Ensure it stays fixed inside the modal */
+    top: 20%; /* Fixed distance from the top */
+    transform: translateY(-50%); /* Center it vertically */
 }
+
+.modal-content h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0; /* Remove extra margins */
+}
+
+.modal-content p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+
+
 
 .close {
     color: white;
@@ -272,4 +293,16 @@ nav a:hover {
     color: #f44336;
     text-decoration: none;
     cursor: pointer;
+}
+
+/* Animation for modal appearance */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95); /* Slightly smaller at the start */
+    }
+    to {
+        opacity: 1;
+        transform: scale(1); /* Normal size */
+    }
 }
