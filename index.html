@@ -8,30 +8,44 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header Section -->
+        <!-- Header -->
         <header>
-            <div class="turntable"></div>
             <h1>Seekify</h1>
             <p>Your Music Recommendations</p>
         </header>
 
-        <!-- Buttons -->
-        <div class="buttons">
-            <button class="learn-more">Read</button>
-            <button class="learn-more">Learn More</button>
-        </div>
+        <!-- Turntable -->
+        <div class="turntable"></div>
 
-        <!-- Search Navigation -->
-        <nav class="search-options">
-           <!-- <a href="#">Search</a> -->
-            <a href="#">Song</a>
-            <a href="#">Artist</a>
-            <a href="#">Genre</a>
+        <!-- Navigation with bubbles -->
+        <nav>
+            <div class="bubble">
+                Song
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="bubble">
+                Artist
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="bubble">
+                Genre
+                <span class="search-icon">🔍</span>
+            </div>
         </nav>
 
-        <!-- Recommendations Section -->
+        <!-- Recommendations -->
         <section class="recommendations">
             <p>What can I help you with?</p>
+            <div class="ai-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="150" height="150">
+                    <!-- Head -->
+                    <circle cx="32" cy="18" r="10" fill="rgba(255, 255, 255, 0.9)" />
+
+                    <!-- Body (Upside-down U shape) -->
+                    <path d="M22 38 a10 10 0 0 1 20 0 v15 h-20 v-15 z" fill="rgba(255, 255, 255, 0.9)" />
+                </svg>
+            </div>
+
             <div class="rec-list">
                 <h2>Your Recommendations</h2>
                 <ul>
@@ -44,8 +58,15 @@
             </div>
         </section>
 
+        <!-- Learn More and Read Buttons -->
+        <div class="buttons">
+            <button class="learn-more">Read</button>
+            <button class="learn-more">Learn More</button>
+        </div>
+
         <!-- Get Recommendations Button -->
         <button class="get-recommendations">Get Recommendations</button>
     </div>
 </body>
 </html>
+
