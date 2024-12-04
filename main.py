@@ -3,19 +3,31 @@ import pandas as pd
 from AdjacencyList import AdjacencyList
 from scipy.spatial.distance import cosine
 import heapq
+from sklearn.preprocessing import MinMaxScaler
 
 # Initialize Flask app
 app = Flask(__name__, static_folder='frontend', static_url_path='')
+
 
 # Serve the frontend
 @app.route('/')
 def serve_frontend():
     return send_from_directory(app.static_folder, 'index.html')
 
+
 # Load and preprocess the dataset
 dataset = pd.read_csv("dataset.csv")
 selected_features = ['valence', 'energy', 'tempo']
-sampled_data = dataset.head(100)  # Use the first 100 rows for testing, then scale
+
+# Normalize features to ensure the cosine similarity calculation works correctly
+scaler = MinMaxScaler()
+dataset[selected_features] = scaler.fit_transform(dataset[selected_features])
+
+# Drop rows with missing feature values
+dataset = dataset.dropna(subset=selected_features)
+
+# Use the first 100 rows for testing
+sampled_data = dataset.head(100)
 adjacencylist = AdjacencyList()
 
 # Build the adjacency list
@@ -23,24 +35,98 @@ for i, row1 in sampled_data.iterrows():
     for j, row2 in sampled_data.iterrows():
         if i != j:
             similarity = 1 - cosine(row1[selected_features], row2[selected_features])
-            adjacencylist.addedge(row1['track_name'], row2['track_name'], similarity)
+            # Use .lower() for comparison, but keep original artist and song names for display
+            adjacencylist.addedge(
+                (row1['track_name'].lower(), row1.get('artists', 'Unknown Artist')),  # Lowercase for comparison
+                (row2['track_name'].lower(), row2.get('artists', 'Unknown Artist')),  # Lowercase for comparison
+                similarity
+            )
 
-# Recommendation endpoint
+
+# Flask route for getting recommendations using artist name
+@app.route('/recommendation-artist', methods=['POST'])
+def get_recommendations_artist():
+    data = request.json
+    search_query = data['search_query']
+
+    # Case-insensitive for artist name
+    artist_data = dataset[dataset['artist_name'].str.lower() == search_query.lower()]
+
+    if artist_data.empty:
+        return jsonify({"error": f"Artist '{search_query}' not found."}), 404
+
+    # Get the first song by the artist
+    first_song = artist_data.iloc[0]
+    song_title = first_song['track_name']
+
+    # Perform similarity calculations for this song
+    recommendations = search_dijkstra(song_title)
+
+    return jsonify({
+        "recommendations": [
+            {"song_title": rec[0], "artist_name": first_song['artist_name'], "similarity_score": 1 - rec[1]} for rec in
+            recommendations]
+    })
+
+
+# Flask route for getting recommendations using genre
+@app.route('/recommendation-genre', methods=['POST'])
+def get_recommendations_genre():
+    data = request.json
+    search_query = data['search_query']
+
+    # Case-insensitive matching for track_genre
+    genre_data = dataset[dataset['track_genre'].str.lower() == search_query.lower()]
+
+    if genre_data.empty:
+        return jsonify({"error": f"Genre '{search_query}' not found."}), 404
+
+    # Get the first song by the genre
+    first_song = genre_data.iloc[0]
+    song_title = first_song['track_name']
+
+    # Perform similarity calculations for this song
+    recommendations = search_dijkstra(song_title)
+
+    return jsonify({
+        "recommendations": [
+            {"song_title": rec[0], "artist_name": first_song['artist_name'], "similarity_score": 1 - rec[1]} for rec in
+            recommendations]
+    })
+
+
+# Recommendation endpoint for song title
 @app.route('/recommendation', methods=['POST'])
 def get_recommendations():
     data = request.json
-    search_query = data.get('search_query', '')
+    search_query = data.get('search_query', '').lower()
 
-    if search_query not in adjacencylist.graph:
+    # Find the song (case-insensitive)
+    matched_songs = [
+        song for song in adjacencylist.graph.keys()
+        if song[0] == search_query
+    ]
+
+    if not matched_songs:
         return jsonify({"error": f"Song '{search_query}' not found."}), 404
 
-    # Use Dijkstra's algorithm to find recommendations
-    recommendations = search_dijkstra(search_query)
+    # Use the first matched song
+    search_song = matched_songs[0]
+    recommendations = search_dijkstra(search_song)
+
     return jsonify({
-        "recommendations": [{"song_title": rec[0], "similarity_score": 1 - rec[1]} for rec in recommendations]
+        "recommendations": [
+            {
+                "song_title": rec[0][0].title(),  # Capitalize the first letter of each word in the song title
+                "artist_name": rec[0][1].title(),  # Capitalize the first letter of each word in the artist name
+                "similarity_score": 1 - rec[1]
+            }
+            for rec in recommendations
+        ]
     })
 
-# Dijkstra's Algorithm
+
+# Dijkstra's Algorithm for finding the most similar songs
 def search_dijkstra(input_song_id):
     queue = [(0, input_song_id)]
     dists = {input_song_id: 0}
@@ -61,9 +147,10 @@ def search_dijkstra(input_song_id):
 
     # Return the top 5 closest songs
     sorted_dists = sorted(dists.items(), key=lambda x: x[1])
-    return sorted_dists[1:6]
+    return sorted_dists[1:6]  # Skip the input song itself
 
-# A* Search Algorithm
+
+# A* Algorithm for finding the most similar songs
 def search_astar(input_song_id):
     queue = [(0, input_song_id)]
     dists = {input_song_id: 0}
@@ -87,25 +174,9 @@ def search_astar(input_song_id):
 
     # Return the top 5 closest songs
     sorted_dists = sorted(dists.items(), key=lambda x: x[1])
-    return sorted_dists[1:6]
+    return sorted_dists[1:6]  # Skip the input song
 
-# test code
-# def test(song_title):
-#     if song_title not in adjacencylist.graph:
-#         print(f"Error: Song '{song_title}' not found in the adjacency list.")
-#         return
-#     recommendations = search_dijkstra(song_title)
-#     print(f"Recommendations for '{song_title}':")
-#     for rec in recommendations:
-#         print(f" {rec[0]} - Similarity: {1 - rec[1]}")
 
+# Run the app yay
 if __name__ == '__main__':
-    # Enables/disables testing
-    run_test = False
-
-    if run_test:
-        # test_song = "Comedy"
-        # test(test_song)
-        pass
-    else:
-        app.run(debug=True)
+    app.run(debug=True)
