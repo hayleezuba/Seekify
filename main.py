@@ -1,90 +1,46 @@
-# Mostly external libraries/APIs we pulled from to make this code work
 from flask import Flask, request, jsonify
 import pandas as pd
-from scipy.spatial.distance import cosine
 from AdjacencyList import AdjacencyList
+from scipy.spatial.distance import cosine, pdist, squareform
 import heapq
 
-# Initialize Flask app
 app = Flask(__name__)
 
-# Load the dataset
-dataset = pd.read_csv("hf://datasets/vishnupriyavr/spotify-million-song-dataset/spotify_millsongdata.csv")
-# Define the important columns we want to use to calculate similarity
-featuredColumns = ['danceability', 'genre', 'tempo']
-# scale values to between 0 and 1 for workability
-dataset[featuredColumns] = dataset[featuredColumns].apply(
-    lambda x: (x - x.min()) / (x.max() - x.min())
-)
-
-# Initialize the AdjacencyList object to store the graph
+# Load and preprocess the dataset
+dataset = pd.read_csv("dataset.csv")
+selected_features = ['valence', 'energy', 'tempo']
+# Use a sample of 100,000 points for speed/save on computation
+# dataset_size = len(dataset)
+# sample_size = min(100000, dataset_size)
+sampled_data = dataset.head(10)  # first 50 rows for testing
 adjacencylist = AdjacencyList()
 
-# Populate the adjacency list with songs and their similarities
-# Each song is a vertex, and the edges between them are the similarity scores
-for _, row in dataset.iterrows():
-    song_id = row['id']
-    song_features = row[featuredColumns].values
-
-    for _, other_row in dataset.iterrows():
-        other_song_id = other_row['id']
-        if song_id != other_song_id:
-            other_song_features = other_row[featuredColumns].values
-            # Cosine is used because the characteristics of the song are changed to numerical values in vectos
-            # Cosine will focus on the direction, not magnitude of the values in each vector
-            # The idea for this was borrowed from https://machinelearninggeek.com/spotify-song-recommender-system-in-python/
-            similarity = 1 - cosine(song_features, other_song_features)
-            adjacencylist.addedge(song_id, other_song_id, similarity)
+# Build the adjacency list
+for i, row1 in sampled_data.iterrows():
+    for j, row2 in sampled_data.iterrows():
+        if i != j:
+            similarity = 1 - cosine(row1[selected_features], row2[selected_features])
+            adjacencylist.addedge(row1['track_name'], row2['track_name'], similarity)
 
 
-# Route for getting similar songs based on user input
-@app.route('/songrecommendation', methods=['POST'])
-def songrecommendation():
+# Flask route for getting recommendations using Dijkstra's algorithm
+@app.route('/recommendation', methods=['POST'])
+def get_recommendations():
+    data = request.json
+    search_query = data['search_query']
+    if search_query not in adjacencylist.graph:
+        return jsonify({"error": "Song not found"}), 404
 
-    # Get the song name from the request's JSON data
-    userInput = request.json.get('song_name', '')
+    # Use Dijkstra's algorithm to find the most similar songs
+    recommendations = search_dijkstra(search_query)
 
-    #Find the song in the dataset using the name
-    inputSong = dataset[dataset['song_title'] == userInput]
-
-    #If the song is not found in the dataset, return an error
-    if inputSong.empty:
-        return jsonify({'error': 'Song not found in the dataset, Please choose another song'})
-
-    # Grab the song ID of the input song using integer location based indexing
-    inputSongId = inputSong.iloc[0]['id']
-
-    # Find the most similar song (use the adjacency list and search method)
-    # similarSongId, similarity = searchdijkstra(inputSongId)
-
-    similar_songs_dijkstra = searchdijkstra(inputSongId)
-    similar_songs_astar = searchastar(inputSongId)
-
-    # TODO: if no similar song is found, return one that's in the same genre
-
-    # Get metadata of the most similar song
-    # similar_song = dataset[dataset['id'] == similarSongId].iloc[0]
-
-    recs_dijkstra = [] # djikastra recommendations
-    for song_id, similarity in similar_songs_dijkstra:
-        similar_song = dataset[dataset['id'] == song_id].iloc[0]
-        recs_dijkstra.append({'song_title': similar_song['song_title'], 'similarity_score': round(similarity, 2)})
-
-    recs_astar = [] # astar recommendations
-    for song_id, similarity in similar_songs_astar:
-        similar_song = dataset[dataset['id'] == song_id].iloc[0]
-        recs_astar.append({'song_title': similar_song['song_title'], 'similarity_score': round(similarity, 2)})
-
-    # Return the result as a JSON response
     return jsonify({
-        'input_song': userInput,
-        'recs_dijkstra': recs_dijkstra,
-        'recs_astar': recs_astar
+        "recommendations": [{"song_title": rec[0], "similarity_score": 1 - rec[1]} for rec in recommendations]
     })
 
-# Search methods that uses Dijkstra's and A* to find the most similar song
-def searchdijkstra(input_song_id):
-    # Should implement using dijkstras algorithm
+
+# Dijkstra's Algorithm
+def search_dijkstra(input_song_id):
     queue = [(0, input_song_id)]
     dists = {input_song_id: 0}
     visited = set()
@@ -95,38 +51,59 @@ def searchdijkstra(input_song_id):
             continue
         visited.add(curr_song)
 
+        # Update distances for neighbors
         for neighbor, weight in adjacencylist.getneighbors(curr_song).items():
-            dist = curr_dist + (1 - weight)
+            dist = curr_dist + (1 - weight)  # Distance is inversely related to similarity
             if neighbor not in dists or dist < dists[neighbor]:
                 dists[neighbor] = dist
                 heapq.heappush(queue, (dist, neighbor))
 
+    # Return the top 5 closest songs (excluding the input song itself)
     sorted_dists = sorted(dists.items(), key=lambda x: x[1])
-    return sorted_dists[1:6]
+    return sorted_dists[1:6]  # Skip the input song
 
 
-def searchastar(input_song_id):
-    # Implement using A* algorithm to compare the two
+# A* Search Algorithm
+def search_astar(input_song_id):
     queue = [(0, input_song_id)]
     dists = {input_song_id: 0}
     visited = set()
 
     while queue:
-        curr_dist, curr_song = heapq.heappop(queue)
+        curr_cost, curr_song = heapq.heappop(queue)
         if curr_song in visited:
             continue
         visited.add(curr_song)
 
+        # Update distances for neighbors
         for neighbor, weight in adjacencylist.getneighbors(curr_song).items():
-            dist = curr_dist + (1 - weight)
-            heuristic = 1 - adjacencylist.graph[input_song_id].get(neighbor, 0)
+            dist = dists[curr_song] + (1 - weight)
+            heuristic = 1 - adjacencylist.graph[input_song_id].get(neighbor, 0)  # Similarity heuristic
             cost = dist + heuristic
+
             if neighbor not in dists or cost < dists[neighbor]:
                 dists[neighbor] = cost
                 heapq.heappush(queue, (cost, neighbor))
 
+    # Return the top 5 closest songs (excluding the input song itself)
     sorted_dists = sorted(dists.items(), key=lambda x: x[1])
-    return sorted_dists[1:6]
+    return sorted_dists[1:6]  # Skip the input song
 
-if __name__ == "__main__":
-    app.run(debug=True)
+def test(song_title):
+    if song_title not in adjacencylist.graph:
+        print(f"Error: Song '{song_title}' not found in the adjacency list.")
+        return
+    recommendations = search_dijkstra(song_title)
+    print(f"Recommendations for '{song_title}':")
+    for rec in recommendations:
+        print(f" {rec[0]} - Similarity: {1 - rec[1]}")
+
+
+if __name__ == '__main__':
+    run_test = True
+
+    if run_test:
+        test_song = "Comedy"
+        test(test_song)
+    else:
+        app.run(debug=True)
