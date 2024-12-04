@@ -1,10 +1,14 @@
-// Log a message to the console to ensure the script is working
+// Ensure the script is working
 console.log("Script loaded successfully!");
+
+// Get modal and modal-related elements only once
+const modal = document.getElementById("modal");
+const modalText = document.getElementById("modal-text");
+const closeModal = document.querySelector(".close");
 
 // Ensure the "Get Recommendations" button is only declared once
 let getRecommendationsButton = document.querySelector(".get-recommendations");
 
-// Add a click event listener to the "Get Recommendations" button
 if (getRecommendationsButton) {
     getRecommendationsButton.addEventListener("click", () => {
         alert("Fetching your recommendations... Stay tuned!");
@@ -13,11 +17,6 @@ if (getRecommendationsButton) {
 
 // Add click event listeners to the "Read" and "Learn More" buttons
 const learnMoreButtons = document.querySelectorAll(".learn-more");
-
-// Modal elements
-const modal = document.getElementById("modal");
-const modalText = document.getElementById("modal-text");
-const closeModal = document.querySelector(".close");
 
 learnMoreButtons.forEach(button => {
     button.addEventListener("click", (event) => {
