@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Montserrat', Arial, sans-serif;
     background-color: black;
     color: white;
     text-align: center;
@@ -18,26 +20,41 @@ header {
 }
 
 .turntable {
-    width: 250px;
-    height: 250px;
-    background: radial-gradient(circle, #121212 60%, #6c63ff 95%); /* Adds a gradient resembling a vinyl disc */
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, #121212 60%, purple 95%);
     border-radius: 50%;
-    position: absolute; /* Allows custom placement */
-    top: 20px; /* Distance from the top */
-    left: 20px; /* Distance from the left */
-    box-shadow: 0 0 15px #6c63ff; /* Adds a glowing effect */
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    box-shadow: 0 0 15px purple;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+.turntable::before {
+    content: '';
+    width: 80px; /* Size of the second inner circle */
+    height: 80px;
+    background: rgba(213, 21, 320, 0.15); /* Slightly darker for contrast */
+    border-radius: 50%;
+    position: absolute;
+    z-index: 1; /* Ensures it stays above the vinyl */
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), /* Soft white glow */
+                0 0 30px rgba(0, 0, 0, 0.5); /* Outer shadow for depth */
+}
+
+
 .turntable::after {
     content: '';
-    width: 50px;
-    height: 50px;
-    background: #1db954; /* Green center circle */
+    width: 7px; /* Smaller center circle */
+    height: 7px;
+    background: white; /* Adjusted opacity */
     border-radius: 50%;
-    box-shadow: 0 0 5px #1db954; /* Glowing effect for the center */
+    box-shadow: 0 0 8px rgba(29, 185, 84, 0.9);
+    position: absolute;
+    z-index: 2; /* Ensures it stays above the middle circle */
 }
 
 
@@ -47,26 +64,28 @@ h1 { /*Seekify*/
     text-align: right; /* Aligns text to the left */
     position: absolute; /* Allows custom placement */
     top: 50px; /* Adjust vertical position */
-    left: 340px; /* Moves it to the right */
+    left: 310px; /* Moves it to the right */
 }
-
 
 p { /* Your Music Recommendations */
     font-size: 20px;
     margin: 10px;
-    text-align: right; /* Aligns text to the left */
+    text-align: right; /* Aligns text to the right */
     position: absolute; /* Allows custom placement */
     top: 160px; /* Adjust vertical position */
-    left: 340px; /* Moves it to the right */
+    left: 290px; /* Moves it to the right */
+    letter-spacing: 2px; /* Adds spacing between letters */
+    line-height: 1.5; /* Increases spacing between lines */
 }
 
-.buttons { /* read and learn more abd Get Recommendations */
-    font-size: 20px;
-    margin: 20px 0;
-    text-align: right; /* Aligns text to the left */
-    position: absolute; /* Allows custom placement */
-    top: 160px; /* Adjust vertical position */
-    left: 340px; /* Moves it to the right */
+.buttons { /* read and learn more buttons */
+    display: flex; /* Align buttons horizontally */
+    justify-content: center; /* Center buttons on the page */
+    gap: 15px; /* Add space between buttons */
+    position: absolute;
+    top: 220px; /* Adjust position on the page */
+    left: 65%; /* Center horizontally */
+    transform: translateX(-50%);
 }
 
 button {
@@ -79,20 +98,28 @@ button {
 }
 
 .learn-more {
-    background: linear-gradient(to right, #1db954, #6c63ff);
-    color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    background: rgba(213, 21, 230, 0.3); /* Purple background */
+    border: 2px solid purple; /* Matching purple border */
+    color: white; /* Text color */
+    padding: 10px 20px; /* Padding for size */
+    border-radius: 25px; /* Rounded edges */
+    font-size: 16px; /* Text size */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Adds a shadow */
+    transition: all 0.3s ease; /* Smooth hover effect */
 }
 
 .learn-more:hover {
-    opacity: 0.9;
+    background: rgba(213, 21, 230, 0.2); /* Slightly darker on hover */
+    border-color: #ffffff; /* Change border to white on hover */
 }
+
 
 nav { /* this is 'song artist and genre */
     position: absolute; /* Allows custom placement */
-    top: 300px; /* Moves it further down */
-    left: 0; /* Aligns it with the center of the screen */
-    width: 100%; /* Ensures it spans the full width of the container */
+    top: 330px; /* Moves it further down */
+    left: -8%; /* Aligns it with the center of the screen */
+    width: 120%; /* Ensures it spans the full width of the container */
     margin: 0 auto;
     display: flex;
     justify-content: center;
@@ -110,25 +137,54 @@ nav a:hover {
     text-decoration: underline;
 }
 
+.bubble {
+    display: flex; /* Aligns text and icon in a row */
+    align-items: center; /* Vertically centers the text and icon */
+    justify-content: space-between; /* Ensures space between text and icon */
+    background: rgba(60, 130, 55, 0.2); /* Light purple background */
+    border: 2px solid green; /* Purple border */
+    border-radius: 25px; /* Rounded edges for bubble effect */
+    padding: 10px 20px; /* Padding for spacing */
+    color: white; /* Text color */
+    font-size: 18px; /* Text size */
+    font-family: 'Montserrat', Arial, sans-serif; /* Matches overall font */
+    width: 150px; /* Fixed width for uniform bubbles */
+    cursor: pointer; /* Pointer cursor for interactivity */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Shadow for a lifted effect */
+    transition: all 0.3s ease; /* Smooth hover transition */
+}
+
+.bubble:hover {
+    background: rgba(70, 99, 20, 0.4); /* Darker background on hover */
+}
+
+.search-icon {
+    margin-left: 10px; /* Adds space between text and icon */
+    font-size: 16px; /* Icon size */
+    color: white; /* Matches the bubble text color */
+}
+
+
 .recommendations {
     position: absolute; /* Allows precise placement */
     top: 400px; /* Moves the entire section further down */
+    left: 28%;
     width: 100%; /* Ensures it spans the full width */
     text-align: center; /* Centers the content */
 }
 
-.recommendations p { /* what can i help you with*/
+.recommendations p { /* What can I help you with */
     position: absolute; /* Allows precise placement */
-    top: 30px; /* Adjusts how far down the text appears */
-    left: 20px; /* Moves the text to the left */
-    font-size: 20px; /* Adjusts font size if necessary */
+    top: 9px; /* Move it higher */
+    left: -125px; /* Move it further to the left */
+    font-size: 18px; /* Adjust font size slightly */
     color: white; /* Ensures visibility */
+    text-align: left; /* Align the text to the left */
 }
-
 
 .rec-list h2 {
     color: #1db954;
-    font-size: 24px;
+    font-size: 20px; /* Smaller font size for "Your Recommendations" */
     margin-bottom: 10px;
 }
 
@@ -140,25 +196,43 @@ nav a:hover {
 }
 
 .rec-list li {
-    margin: 10px 0; /* Adds spacing between list items */
-    font-size: 18px; /* Slightly larger font for better readability */
+    margin: 8px 0; /* Reduces spacing between list items */
+    font-size: 16px; /* Smaller font size for the list items */
 }
 
-.get-recommendations { /* get recommendations button */
-    background: linear-gradient(to right, #1db954, #6c63ff);
-    color: white;
-    border: none;
-    padding: 10px 30px;
-    font-size: 18px;
-    border-radius: 25px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    position: absolute; /* Allows precise placement */
-    top: 500px; /* Moves the button further down */
-    left: 50%; /* Centers the button horizontally */
-    transform: translateX(-50%); /* Adjust for perfect centering */
+.get-recommendations {
+    background: rgba(213, 21, 320, 0.2); /* Purple background */
+    border: 2px solid purple; /* Matching purple border */
+    color: white; /* Text color */
+    padding: 10px 30px; /* Padding for size */
+    border-radius: 25px; /* Rounded edges */
+    font-size: 18px; /* Text size */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Adds a shadow */
+    transition: all 0.3s ease; /* Smooth hover effect */
+    position: absolute; /* Keeps it positioned precisely */
+    top: 630px; /* Moves it further down */
+    left: 50%; /* Centers it horizontally */
+    transform: translateX(-50%); /* Ensures centering */
 }
 
 .get-recommendations:hover {
-    opacity: 0.9;
+    background: rgba(108, 99, 255, 1); /* Slightly darker on hover */
+    border-color: #ffffff; /* Change border to white on hover */
 }
+
+
+
+.ai-icon {
+    position: absolute;
+    top: 50px; /* Adjust vertical position */
+    left: -105px; /* Adjust horizontal position */
+    width: 150px; /* Avatar size */
+    height: 150px;
+}
+
+.ai-icon svg {
+    width: 100%; /* Ensure SVG fills the container */
+    height: 100%;
+}
+
