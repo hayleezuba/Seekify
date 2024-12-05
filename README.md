@@ -30,7 +30,7 @@ Seekify uses a visually pleasing interface to create a positive user experience 
 
 1. Clone the repository:  
    ```bash  
-   git clone https://github.com/hayleezuba/SpotifyProjectDSA.git  
+   git clone https://github.com/hayleezuba/Seekify.git  
    cd Seekify
 
 2. Install Dependencies:
