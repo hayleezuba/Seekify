@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (data.recommendations) {
                         data.recommendations.forEach((rec) => {
                             const li = document.createElement("li");
-                            li.textContent = `${rec.song_title} by ${rec.artist_name} (Similarity: ${rec.similarity_score.toFixed(2)})`;
+                            li.textContent = `${rec.song_title} by ${rec.artists} (Similarity: ${rec.similarity_score.toFixed(2)})`;
                             recommendationsList.appendChild(li);
                         });
                     } else {
