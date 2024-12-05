@@ -12,7 +12,7 @@ app = Flask(__name__, static_folder='frontend', static_url_path='')
 # Serve the frontend
 @app.route('/')
 def serve_frontend():
-    return send_from_directory(app.static_folder, 'index.html')  # might have to change depending on your setup (ex. FrontEnd/index.html)
+    return send_from_directory(app.static_folder, 'index.html')
 
 
 # Load and preprocess the dataset
@@ -27,7 +27,7 @@ dataset[selected_features] = scaler.fit_transform(dataset[selected_features])
 dataset = dataset.dropna(subset=selected_features)
 
 # Change to smaller number for testing (ex. 100)
-sampled_data = dataset.head(10000)
+sampled_data = dataset.head(100)
 adjacencylist = AdjacencyList()
 
 # Build the adjacency list
