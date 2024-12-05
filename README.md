@@ -43,4 +43,6 @@ Seekify uses a visually pleasing interface to create a positive user experience 
    http://localhost:5000  
 
 ---
-
+## Notes
+If the main has an error, replace the filepath with
+app = Flask(__name__, static_folder='frontend', static_url_path='')
