@@ -27,7 +27,7 @@ dataset[selected_features] = scaler.fit_transform(dataset[selected_features])
 dataset = dataset.dropna(subset=selected_features)
 
 # Change to smaller number for testing (ex. 100)
-sampled_data = dataset.head(10000)
+sampled_data = dataset.head(100000)
 adjacencylist = AdjacencyList()
 
 # Build the adjacency list
