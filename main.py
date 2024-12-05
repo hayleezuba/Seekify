@@ -12,7 +12,7 @@ app = Flask(__name__, static_folder='frontend', static_url_path='')
 # Serve the frontend
 @app.route('/')
 def serve_frontend():
-    return send_from_directory(app.static_folder, 'index.html')  # might have to change depending on your setup (ex. 'FrontEnd/index.html')
+    return send_from_directory(app.static_folder, 'index.html')  # might have to change depending on your setup (ex. FrontEnd/index.html)
 
 
 # Load and preprocess the dataset
@@ -26,8 +26,8 @@ dataset[selected_features] = scaler.fit_transform(dataset[selected_features])
 # Drop rows with missing feature values
 dataset = dataset.dropna(subset=selected_features)
 
-# Use the first 100 rows for testing
-sampled_data = dataset.head(100)
+# Change to smaller number for testing (ex. 100)
+sampled_data = dataset.head(10000)
 adjacencylist = AdjacencyList()
 
 # Build the adjacency list
@@ -41,6 +41,36 @@ for i, row1 in sampled_data.iterrows():
                 (row2['track_name'].lower(), row2.get('artists', 'Unknown Artist')),  # Lowercase for comparison
                 similarity
             )
+
+# Recommendation endpoint for song title
+@app.route('/recommendation', methods=['POST'])
+def get_recommendations():
+    data = request.json
+    search_query = data.get('search_query', '').lower()
+
+    # Find the song (case-insensitive)
+    matched_songs = [
+        song for song in adjacencylist.graph.keys()
+        if song[0] == search_query
+    ]
+
+    if not matched_songs:
+        return jsonify({"error": f"Song '{search_query}' not found."}), 404
+
+    # Use the first matched song
+    search_song = matched_songs[0]
+    recommendations = search_dijkstra(search_song)
+
+    return jsonify({
+        "recommendations": [
+            {
+                "song_title": rec[0][0].title(),  # Capitalize the first letter of each word in the song title
+                "artists": rec[0][1].title(),  # Capitalize the first letter of each word in the artist name
+                "similarity_score": 1 - rec[1]
+            }
+            for rec in recommendations
+        ]
+    })
 
 
 # Flask route for getting recommendations using artist name
@@ -62,67 +92,6 @@ def get_recommendations_artist():
 
     # Perform similarity calculations for this song
     recommendations = search_dijkstra((song_title.lower(), artists))
-
-    return jsonify({
-        "recommendations": [
-            {
-                "song_title": rec[0][0].title(),  # Capitalize the first letter of each word in the song title
-                "artists": rec[0][1].title(),  # Capitalize the first letter of each word in the artist name
-                "similarity_score": 1 - rec[1]
-            }
-            for rec in recommendations
-        ]
-    })
-
-
-# Flask route for getting recommendations using genre
-@app.route('/recommendation-genre', methods=['POST'])
-def get_recommendations_genre():
-    data = request.json
-    search_query = data['search_query']
-
-    # Case-insensitive matching for track_genre
-    genre_data = dataset[dataset['track_genre'].str.lower() == search_query.lower()]
-
-    if genre_data.empty:
-        return jsonify({"error": f"Genre '{search_query}' not found."}), 404
-
-    # Perform similarity calculations for this song
-    # first_song = genre_data.iloc[0]
-    # song_title = first_song['track_name']
-    # artist_name = first_song['artists']
-    # recommendations = search_dijkstra((song_title.lower(), artist_name))
-    recommendations = genre_data.head(5)
-
-    return jsonify({
-        "recommendations": [
-            {
-                "song_title": row['track_name'].title(),  # Capitalize the first letter of each word in the song title
-                "artists": row['artists'].title(),  # Capitalize the first letter of each word in the artist name
-            }
-            for _, row in recommendations.iterrows()
-        ]
-    })
-
-
-# Recommendation endpoint for song title
-@app.route('/recommendation', methods=['POST'])
-def get_recommendations():
-    data = request.json
-    search_query = data.get('search_query', '').lower()
-
-    # Find the song (case-insensitive)
-    matched_songs = [
-        song for song in adjacencylist.graph.keys()
-        if song[0] == search_query
-    ]
-
-    if not matched_songs:
-        return jsonify({"error": f"Song '{search_query}' not found."}), 404
-
-    # Use the first matched song
-    search_song = matched_songs[0]
-    recommendations = search_dijkstra(search_song)
 
     return jsonify({
         "recommendations": [
