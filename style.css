@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
 body {
@@ -46,7 +45,6 @@ header {
                 0 0 30px rgba(0, 0, 0, 0.5); /* Outer shadow for depth */
 }
 
-
 .turntable::after {
     content: '';
     width: 7px; /* Smaller center circle */
@@ -58,8 +56,7 @@ header {
     z-index: 2; /* Ensures it stays above the middle circle */
 }
 
-
-h1 { /*Seekify*/
+h1 { /* Seekify */
     font-size: 86px;
     margin: 10px;
     text-align: right; /* Aligns text to the left */
@@ -79,7 +76,7 @@ p { /* Your Music Recommendations */
     line-height: 1.5; /* Increases spacing between lines */
 }
 
-.buttons { /* read and learn more buttons */
+.buttons { /* Read and learn more buttons */
     display: flex; /* Align buttons horizontally */
     justify-content: center; /* Center buttons on the page */
     gap: 15px; /* Add space between buttons */
@@ -108,6 +105,7 @@ button {
     cursor: pointer; /* Pointer cursor on hover */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Adds a shadow */
     transition: all 0.3s ease; /* Smooth hover effect */
+
 }
 
 .learn-more:hover {
@@ -115,15 +113,15 @@ button {
     border-color: #ffffff; /* Change border to white on hover */
 }
 
-nav {
+nav { /* Song and artist*/
     position: absolute; /* Allows custom placement */
-    top: 330px; /* Moves it further down */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Ensure centering */
-    display: flex; /* Align buttons horizontally */
-    justify-content: center; /* Center-align the buttons */
-    gap: 30px; /* Add spacing between the buttons */
-    width: auto; /* Adjust width to fit the buttons */
+    top: 330px;
+    left: -9%;
+    width: 120%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }
 
 nav a {
@@ -136,21 +134,22 @@ nav a:hover {
     text-decoration: underline;
 }
 
+/* Bubble Style */
 .bubble {
-    display: flex; /* Aligns text and icon in a row */
-    align-items: center; /* Vertically centers the text and icon */
-    justify-content: space-between; /* Ensures space between text and icon */
-    background: rgba(60, 130, 55, 0.2); /* Light purple background */
-    border: 2px solid green; /* Purple border */
-    border-radius: 25px; /* Rounded edges for bubble effect */
-    padding: 10px 20px; /* Padding for spacing */
-    color: white; /* Text color */
-    font-size: 18px; /* Text size */
-    font-family: 'Montserrat', Arial, sans-serif; /* Matches overall font */
-    width: 150px; /* Fixed width for uniform bubbles */
-    cursor: pointer; /* Pointer cursor for interactivity */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Shadow for a lifted effect */
-    transition: all 0.3s ease; /* Smooth hover transition */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(60, 130, 55, 0.2);
+    border: 2px solid green;
+    border-radius: 25px;
+    padding: 10px 20px;
+    color: white;
+    font-size: 18px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    width: 150px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
 }
 
 .bubble:hover {
@@ -163,79 +162,71 @@ nav a:hover {
     color: white; /* Matches the bubble text color */
 }
 
-
-.recommendations {
-    position: absolute; /* Allows precise placement */
-    top: 400px; /* Moves the entire section further down */
-    left: 28%;
-    width: 100%; /* Ensures it spans the full width */
-    text-align: center; /* Centers the content */
+/* Style for the input fields inside the bubbles */
+.bubble input {
+    background: transparent;   /* Make the background transparent */
+    color: white;               /* Text color */
+    border: none;               /* Remove border */
+    padding: 10px 20px;         /* Padding for input */
+    font-size: 16px;            /* Font size */
+    width: 150px;               /* Width similar to the bubble */
+    border-radius: 25px;        /* Rounded edges for the input */
+    text-align: center;         /* Center-align the text inside */
+    outline: none;              /* Remove default outline on focus */
 }
 
-.recommendations p { /* What can I help you with */
-    position: absolute; /* Allows precise placement */
-    top: 9px; /* Move it higher */
-    left: -125px; /* Move it further to the left */
-    font-size: 18px; /* Adjust font size slightly */
-    color: white; /* Ensures visibility */
-    text-align: left; /* Align the text to the left */
+.bubble input::placeholder {
+    color: #aaa;                /* Placeholder text color */
+}
+
+.recommendations {
+    position: absolute;
+    top: 400px;
+    left: 28%;
+    width: 100%;
+    text-align: center;
+}
+
+.recommendations p {
+    position: absolute;
+    top: 9px;
+    left: -125px;
+    font-size: 18px;
+    color: white;
+    text-align: left;
 }
 
 .rec-list h2 {
     color: #1db954;
-    font-size: 20px; /* Smaller font size for "Your Recommendations" */
+    font-size: 20px;
     margin-bottom: 10px;
 }
 
 .rec-list ul {
     list-style: none;
     padding: 0;
-    margin-top: 20px; /* Adds space between the heading and the list */
+    margin-top: 20px;
     color: #aaa;
 }
 
 .rec-list li {
-    margin: 8px 0; /* Reduces spacing between list items */
-    font-size: 16px; /* Smaller font size for the list items */
+    margin: 8px 0;
+    font-size: 16px;
 }
-
-.get-recommendations {
-    background: rgba(213, 21, 320, 0.2); /* Purple background */
-    border: 2px solid purple; /* Matching purple border */
-    color: white; /* Text color */
-    padding: 10px 30px; /* Padding for size */
-    border-radius: 25px; /* Rounded edges */
-    font-size: 20px; /* Text size */
-    cursor: pointer; /* Pointer cursor on hover */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Adds a shadow */
-    transition: all 0.3s ease; /* Smooth hover effect */
-    position: absolute; /* Keeps it positioned precisely */
-    top: 630px; /* Moves it further down */
-    left: 51%; /* Centers it horizontally */
-    transform: translateX(-50%); /* Ensures centering */
-}
-
-.get-recommendations:hover {
-    background: rgba(108, 99, 255, 1); /* Slightly darker on hover */
-    border-color: #ffffff; /* Change border to white on hover */
-}
-
-
 
 .ai-icon {
     position: absolute;
-    top: 50px; /* Adjust vertical position */
-    left: -105px; /* Adjust horizontal position */
-    width: 150px; /* Avatar size */
+    top: 50px;
+    left: -105px;
+    width: 150px;
     height: 150px;
 }
 
 .ai-icon svg {
-    width: 100%; /* Ensure SVG fills the container */
+    width: 100%;
     height: 100%;
 }
 
-/* Modal styles */
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -245,7 +236,7 @@ nav a:hover {
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0, 0, 0, 0.8); /* Black background with opacity */
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .modal-content {
@@ -264,7 +255,6 @@ nav a:hover {
     top: 20%; /* Fixed distance from the top */
     transform: translateY(-50%); /* Center it vertically */
 }
-
 
 .modal-content h2 {
     font-size: 28px; /* Larger heading for emphasis */
@@ -285,8 +275,6 @@ nav a:hover {
     max-width: 90%; /* Prevent the box from getting too wide */
     width: 80%; /* Adjust width to make the box wider */
 }
-
-
 
 .close {
     color: white;
