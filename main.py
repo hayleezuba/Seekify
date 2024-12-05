@@ -12,7 +12,7 @@ app = Flask(__name__, static_folder='frontend', static_url_path='')
 # Serve the frontend
 @app.route('/')
 def serve_frontend():
-    return send_from_directory(app.static_folder, 'index.html')
+    return send_from_directory(app.static_folder, 'index.html')  # might have to change depending on your setup (ex. 'FrontEnd/index.html')
 
 
 # Load and preprocess the dataset
@@ -50,22 +50,28 @@ def get_recommendations_artist():
     search_query = data['search_query']
 
     # Case-insensitive for artist name
-    artist_data = dataset[dataset['artist_name'].str.lower() == search_query.lower()]
+    artist_data = dataset[dataset['artists'].str.lower() == search_query.lower()]
 
     if artist_data.empty:
         return jsonify({"error": f"Artist '{search_query}' not found."}), 404
 
-    # Get the first song by the artist
-    first_song = artist_data.iloc[0]
-    song_title = first_song['track_name']
+    # Get the most popular song by the artist
+    most_popular_song = artist_data.loc[artist_data['popularity'].idxmax()]
+    song_title = most_popular_song['track_name']
+    artists = most_popular_song['artists']
 
     # Perform similarity calculations for this song
-    recommendations = search_dijkstra(song_title)
+    recommendations = search_dijkstra((song_title.lower(), artists))
 
     return jsonify({
         "recommendations": [
-            {"song_title": rec[0], "artist_name": first_song['artist_name'], "similarity_score": 1 - rec[1]} for rec in
-            recommendations]
+            {
+                "song_title": rec[0][0].title(),  # Capitalize the first letter of each word in the song title
+                "artists": rec[0][1].title(),  # Capitalize the first letter of each word in the artist name
+                "similarity_score": 1 - rec[1]
+            }
+            for rec in recommendations
+        ]
     })
 
 
@@ -81,17 +87,21 @@ def get_recommendations_genre():
     if genre_data.empty:
         return jsonify({"error": f"Genre '{search_query}' not found."}), 404
 
-    # Get the first song by the genre
-    first_song = genre_data.iloc[0]
-    song_title = first_song['track_name']
-
     # Perform similarity calculations for this song
-    recommendations = search_dijkstra(song_title)
+    # first_song = genre_data.iloc[0]
+    # song_title = first_song['track_name']
+    # artist_name = first_song['artists']
+    # recommendations = search_dijkstra((song_title.lower(), artist_name))
+    recommendations = genre_data.head(5)
 
     return jsonify({
         "recommendations": [
-            {"song_title": rec[0], "artist_name": first_song['artist_name'], "similarity_score": 1 - rec[1]} for rec in
-            recommendations]
+            {
+                "song_title": row['track_name'].title(),  # Capitalize the first letter of each word in the song title
+                "artists": row['artists'].title(),  # Capitalize the first letter of each word in the artist name
+            }
+            for _, row in recommendations.iterrows()
+        ]
     })
 
 
@@ -118,7 +128,7 @@ def get_recommendations():
         "recommendations": [
             {
                 "song_title": rec[0][0].title(),  # Capitalize the first letter of each word in the song title
-                "artist_name": rec[0][1].title(),  # Capitalize the first letter of each word in the artist name
+                "artists": rec[0][1].title(),  # Capitalize the first letter of each word in the artist name
                 "similarity_score": 1 - rec[1]
             }
             for rec in recommendations
