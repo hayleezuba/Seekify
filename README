@@ -1,6 +1,0 @@
-Project name: Seekify, by Sophia Cardona Nader, Estefania Griffiths, and Haylee Zuba
-This project is intended to mitigate the barrier between Spotify users and finding new music. Listening to the same old songs can be frustrating.
-Seekify aims to create an ease of access song finder based on song similarity.
-
-About this project
-This project is accomplished by utilizing graphs to store the song data, giving each song a weight using a similarity metric, then using Djikstra's algorithm to find the path with least weight from one song to the next.
