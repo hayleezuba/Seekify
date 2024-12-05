@@ -12,8 +12,8 @@ class AdjacencyList:
 
     def addedge(self, fromv, tov, weight):
         # Add an edge with weight to the graph
-        self.addVertex(fromv)
-        self.addVertex(tov)
+        self.addvertex(fromv)
+        self.addvertex(tov)
         self.graph[fromv][tov] = weight
 
     def getneighbors(self, vertex):
